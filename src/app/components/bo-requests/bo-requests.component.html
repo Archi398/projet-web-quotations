@@ -1,95 +1,132 @@
-<div style="margin: 0 10% 0 10%">
-  <h1>List of quotations :</h1>
-  <div style="display: flex">
-    <div style="display: flex; flex-direction: column; width: 300px">
-      <label for="username">Search name :</label>
-      <input
-        type="text"
-        pInputText
-        id="search"
-        aria-describedby="search-help"
-        (input)="searchNameQuotations($event)"
-      />
-      <small id="search-help">Search by name a quotation</small>
-    </div>
-    <hr />
-    <div>
-      <h3>Filter by status :</h3>
-      <div class="flex flex-wrap gap-3">
-        <div class="flex align-items-center">
-          <p-radioButton
-            name="status"
-            value="All"
-            [(ngModel)]="status"
-            (ngModelChange)="filterStatusQuotations()"
-            inputId="All"
-          ></p-radioButton>
-          <label for="All" class="ml-2">All</label>
+<div class="container">
+  <h1>List of requests quotations :</h1>
+  <div class="container-header">
+    <div class="flex">
+      <div class="container-filter-name">
+        <h3>Filter by name :</h3>
+        <input
+          type="text"
+          pInputText
+          id="search"
+          aria-describedby="search-help"
+          (input)="searchNameQuotations($event)"
+        />
+        <small id="search-help">Search by name a quotation</small>
+      </div>
+      <hr />
+      <div>
+        <h3>Filter by status :</h3>
+        <div class="flex flex-column">
+          <div>
+            <p-radioButton
+              name="status"
+              value="All"
+              [(ngModel)]="status"
+              (ngModelChange)="filterStatusQuotations()"
+              inputId="All"
+            ></p-radioButton>
+            <label for="All" class="ml-2">All</label>
+          </div>
+          <div>
+            <p-radioButton
+              name="status"
+              value="Pending"
+              [(ngModel)]="status"
+              (ngModelChange)="filterStatusQuotations()"
+              inputId="Pending"
+            ></p-radioButton>
+            <label for="Pending" class="ml-2">Pending</label>
+          </div>
+          <div>
+            <p-radioButton
+              name="status"
+              value="Success"
+              [(ngModel)]="status"
+              (ngModelChange)="filterStatusQuotations()"
+              inputId="Success"
+            ></p-radioButton>
+            <label for="Success" class="ml-2">Success</label>
+          </div>
         </div>
-
-        <div class="flex align-items-center">
-          <p-radioButton
-            name="status"
-            value="Pending"
-            [(ngModel)]="status"
-            (ngModelChange)="filterStatusQuotations()"
-            inputId="Pending"
-          ></p-radioButton>
-          <label for="Pending" class="ml-2">Pending</label>
-        </div>
-
-        <div class="flex align-items-center">
-          <p-radioButton
-            name="status"
-            value="Success"
-            [(ngModel)]="status"
-            (ngModelChange)="filterStatusQuotations()"
-            inputId="Success"
-          ></p-radioButton>
-          <label for="Success" class="ml-2">Success</label>
-        </div>
+      </div>
+      <hr />
+      <div>
+        <h3>Filter by price range :</h3>
+        <p-slider
+          [(ngModel)]="rangeValues"
+          (ngModelChange)="filterPriceQuotations()"
+          [range]="true"
+          [max]="1000"
+        ></p-slider>
+        <p>Min : {{ rangeValues[0] | currency : "USD" }}</p>
+        <p>Max : {{ rangeValues[1] | currency : "USD" }}</p>
       </div>
     </div>
     <hr />
-    <div>
-      <h3>Search price range :</h3>
-      <p-slider
-        [(ngModel)]="rangeValues"
-        (ngModelChange)="filterPriceQuotations()"
-        [range]="true"
-        [max]="1000"
-      ></p-slider>
-      <p>Min : {{ rangeValues[0] }}</p>
-      <p>Max : {{ rangeValues[1] }}</p>
-    </div>
   </div>
-  <hr />
-  <div class="container-quotations">
-    <div
-      *ngFor="let quotation of filteredQuotations; index as i"
-      class="container-quotation"
+  <div class="card">
+    <p-table
+      [value]="filteredQuotations"
+      [tableStyle]="{ 'min-width': '60rem' }"
     >
-      <img
-        src="{{ quotation.img }}"
-        [alt]="quotation.name"
-        [style]="{ height: '100px', width: '100px' }"
-      />
-      <h4>Name : {{ quotation.name }}</h4>
-      <h6>Price : {{ "$" + quotation.price }}</h6>
-      <p-tag
-        [value]="quotation.status"
-        [severity]="getSeverity(quotation.status)"
-      ></p-tag>
-      <h6>Description : {{ quotation.description }}</h6>
-      <p-button
-        (click)="deleteQuotation(quotation)"
-        label="Delete"
-        severity="danger"
-      ></p-button>
-    </div>
-    <h2 *ngIf="filteredQuotations.length > 0">Total : {{ filteredQuotations.length }}</h2>
+      <ng-template pTemplate="caption">
+        <div class="flex align-items-center justify-content-between">
+          Quotations
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Name</th>
+          <th>Image</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th>Description</th>
+          <th>Delete</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-quotation>
+        <tr>
+          <td>{{ quotation.name }}</td>
+          <td>
+            <img
+              src="{{ quotation.img }}"
+              [alt]="quotation.name"
+              width="100"
+              class="shadow-4"
+            />
+          </td>
+          <td>{{ quotation.price | currency : "USD" }}</td>
+          <td>
+            <p-tag
+              [value]="quotation.status"
+              [severity]="getSeverity(quotation.status)"
+            ></p-tag>
+          </td>
+          <td>
+            <div *ngFor="let item of quotation.description.split(', ')">
+              {{ item }}
+            </div>
+          </td>
+          <td>
+            <p-button
+              (click)="deleteQuotation(quotation)"
+              label="Delete"
+              severity="danger"
+            ></p-button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <div>
+          In total there are
+          {{ filteredQuotations ? filteredQuotations.length : 0 }} Quotations.
+        </div>
+      </ng-template>
+    </p-table>
+  </div>
+  <div class="container-quotations">
     <h2 *ngIf="filteredQuotations.length == 0">
-      No quotation find, please search another name
+      No quotation find, please widen your search.
     </h2>
   </div>
 </div>

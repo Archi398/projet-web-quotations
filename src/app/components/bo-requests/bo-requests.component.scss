@@ -1,24 +1,43 @@
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
 
-#chart {
-    width: 650px;
-    margin: 35px auto;
-    background-color: white;
+.container {
+  margin: 0 10% 0 10%;
 }
 
-.container-quotations{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    flex-wrap: wrap;
+.container-header {
+  position: sticky;
+  top: 0px;
+  z-index: 100;
+  background-color: white;
 }
 
-.container-quotation{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    align-items: center;
-    margin: 10px;
+.container-filter-name {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-column{
+  flex-direction: column;
+}
+
+.container-quotations {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.container-quotation {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 10px;
 }
