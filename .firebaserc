@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "projet-web-60d66": {
+      "hosting": {
+        "back-office": [
+          "back-office-2e335"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "projet-web-60d66"
+  }
+}

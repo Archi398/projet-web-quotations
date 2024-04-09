@@ -7,6 +7,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { SliderModule } from 'primeng/slider';
 
+import { GetRequestQuoteService } from '../../services/get-request-quote-service.service';
+
 @Component({
   selector: 'bo-requests',
   standalone: true,
@@ -69,8 +71,14 @@ export class BoRequestComponent {
   status!: string;
   rangeValues: number[] = [20, 1000];
 
+   constructor(private getRequestQuoteService: GetRequestQuoteService) {}
+
   ngOnInit() {
-    this.filteredQuotations = this.quotations;
+    this.getRequestQuoteService.getRequestQuotes().subscribe((quotations) => {
+      this.quotations = quotations;
+      this.filteredQuotations = quotations;
+    });
+    // this.filteredQuotations = this.quotations;
   }
 
   searchNameQuotations(event: Event) {
