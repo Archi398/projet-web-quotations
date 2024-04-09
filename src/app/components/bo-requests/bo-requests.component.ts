@@ -42,6 +42,7 @@ export class BoRequestComponent implements OnDestroy {
       .getRequestQuotes()
       .pipe(takeUntil(this.destroy$))
       .subscribe((quotations) => {
+        console.log(quotations);
         this.quotations = quotations;
         this.filteredQuotations = quotations;
       });
@@ -79,12 +80,7 @@ export class BoRequestComponent implements OnDestroy {
   }
 
   deleteQuotation(request: requests) {
-    this.quotations = this.quotations.filter(
-      (quotation) => quotation.id !== request.id
-    );
-    this.filteredQuotations = this.filteredQuotations.filter(
-      (quotation) => quotation.id !== request.id
-    );
+    this.getRequestQuoteService.deleteRequestQuote(request.id.toString());
   }
 
   getSeverity(status: string) {

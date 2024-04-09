@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, query, onSnapshot } from '@angular/fire/firestore';
+import { Firestore, collection, query, onSnapshot, deleteDoc, doc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -18,4 +18,9 @@ export class GetRequestQuoteService {
       return unsubscribe;
     });
   }
+  
+  deleteRequestQuote(id: string): void {
+    deleteDoc(doc(this.firestore, 'requests-quotations', id));
+  }
+
 }
