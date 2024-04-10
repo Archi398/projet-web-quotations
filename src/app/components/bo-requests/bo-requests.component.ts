@@ -14,6 +14,8 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { GetRequestQuoteService } from '../../services/get-request-quote-service.service';
 import { Subject, takeUntil } from 'rxjs';
 
+import { requests } from '../../types/requests';
+
 @Component({
   selector: 'bo-requests',
   standalone: true,
@@ -147,13 +149,3 @@ export class BoRequestComponent implements OnDestroy {
     }
   }
 }
-
-export type requests = {
-  id: number;
-  img: string;
-  name: string;
-  description: string;
-  IDuser: number;
-  price: number;
-  status: string;
-};
