@@ -22,7 +22,7 @@
   display: flex;
 }
 
-.flex-column{
+.flex-column {
   flex-direction: column;
 }
 
@@ -40,4 +40,14 @@
   flex-wrap: wrap;
   align-items: center;
   margin: 10px;
+}
+
+.flex-direction-media-query {
+  flex-direction: row;
+}
+
+@media screen and (max-width: 768px) {
+  .flex-direction-media-query {
+    flex-direction: column;
+  }
 }

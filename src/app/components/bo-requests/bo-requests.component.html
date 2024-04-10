@@ -1,7 +1,7 @@
 <div class="container">
   <h1>List of requests quotations :</h1>
   <div class="container-header">
-    <div class="flex">
+    <div class="flex flex-direction-media-query">
       <div class="container-filter-name">
         <h3>Filter by name :</h3>
         <input
@@ -64,69 +64,87 @@
     </div>
     <hr />
   </div>
-  <div class="card">
-    <p-table
-      [value]="filteredQuotations"
-      [tableStyle]="{ 'min-width': '60rem' }"
-    >
-      <ng-template pTemplate="caption">
-        <div class="flex align-items-center justify-content-between">
-          Quotations
-        </div>
-      </ng-template>
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Name</th>
-          <th>Image</th>
-          <th>Price</th>
-          <th>Status</th>
-          <th>Description</th>
-          <th>Delete</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-quotation>
-        <tr>
-          <td>{{ quotation.name }}</td>
-          <td>
-            <img
-              src="{{ quotation.img }}"
-              [alt]="quotation.name"
-              width="100"
-              class="shadow-4"
-            />
-          </td>
-          <td>{{ quotation.price | currency : "USD" }}</td>
-          <td>
-            <p-tag
-              [value]="quotation.status"
-              [severity]="getSeverity(quotation.status)"
-            ></p-tag>
-          </td>
-          <td>
-            <div *ngFor="let item of quotation.description.split(', ')">
-              {{ item }}
-            </div>
-          </td>
-          <td>
-            <p-button
-              (click)="deleteQuotation(quotation)"
-              label="Delete"
-              severity="danger"
-            ></p-button>
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="summary">
-        <div>
-          In total there are
-          {{ filteredQuotations ? filteredQuotations.length : 0 }} Quotations.
-        </div>
-      </ng-template>
-    </p-table>
-  </div>
-  <div class="container-quotations">
-    <h2 *ngIf="filteredQuotations.length == 0">
-      No quotation find, please widen your search.
-    </h2>
-  </div>
+  <h2 *ngIf="filteredQuotations.length == 0; else elseTemplate">
+    No quotation found, please widen your search.
+  </h2>
+  <ng-template #elseTemplate>
+    <div class="card">
+      <p-table
+        [value]="filteredQuotations"
+        [tableStyle]="{ 'min-width': '60rem' }"
+      >
+        <ng-template pTemplate="caption">
+          <div class="flex align-items-center justify-content-between">
+            Quotations
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Name</th>
+            <th>Image</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Description</th>
+            <th>Delete</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-quotation>
+          <tr>
+            <td>{{ quotation.name }}</td>
+            <td>
+              <img
+                src="{{ quotation.img }}"
+                [alt]="quotation.name"
+                width="100"
+                class="shadow-4"
+              />
+            </td>
+            <td>
+              {{ (quotation.price | currency : "USD") ?? "No price yet" }}
+            </td>
+            <td>
+              <p-tag
+                [value]="quotation.price == 0 ? 'Pending' : 'Success'"
+                [severity]="
+                  getSeverity(quotation.price == 0 ? 'Pending' : 'Success')
+                "
+              ></p-tag>
+            </td>
+            <td>
+              <div *ngFor="let item of quotation.description.split(', ')">
+                {{ item }}
+              </div>
+            </td>
+            <td>
+              <p-confirmPopup>
+                <ng-template pTemplate="content" let-message>
+                  <div
+                    class="flex flex-column align-items-center w-full gap-3 border-bottom-1 surface-border p-3 mb-3"
+                  >
+                    <i
+                      [class]="message.icon"
+                      class="text-6xl text-primary-500"
+                    ></i>
+                    <p>{{ message.message }}</p>
+                  </div>
+                </ng-template>
+              </p-confirmPopup>
+              <p-button
+                (click)="confirm($event, quotation)"
+                label="Delete"
+                severity="danger"
+              ></p-button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+          <div>
+            In total there are
+            {{ filteredQuotations ? filteredQuotations.length : 0 }} Quotations.
+          </div>
+        </ng-template>
+      </p-table>
+    </div>
+  </ng-template>
+  <p-toast></p-toast>
 </div>

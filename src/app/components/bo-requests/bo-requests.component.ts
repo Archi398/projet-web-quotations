@@ -7,6 +7,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { SliderModule } from 'primeng/slider';
 import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
 
 import { GetRequestQuoteService } from '../../services/get-request-quote-service.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -23,6 +26,8 @@ import { Subject, takeUntil } from 'rxjs';
     FormsModule,
     SliderModule,
     TableModule,
+    ToastModule,
+    ConfirmPopupModule,
   ],
   templateUrl: './bo-requests.component.html',
   styleUrls: ['./bo-requests.component.scss'],
@@ -33,9 +38,13 @@ export class BoRequestComponent implements OnDestroy {
   quotations: requests[] = [];
   filteredQuotations: requests[] = [];
   status!: string;
-  rangeValues: number[] = [20, 1000];
+  rangeValues: number[] = [0, 1000];
 
-  constructor(private getRequestQuoteService: GetRequestQuoteService) {}
+  constructor(
+    private getRequestQuoteService: GetRequestQuoteService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit() {
     this.getRequestQuoteService
@@ -62,13 +71,24 @@ export class BoRequestComponent implements OnDestroy {
   }
 
   filterStatusQuotations() {
-    if (!this.status || this.status === 'All') {
-      this.filteredQuotations = this.quotations;
-      return;
+    switch (this.status) {
+      case 'All':
+        this.filteredQuotations = this.quotations;
+        break;
+      case 'Success':
+        this.filteredQuotations = this.quotations.filter(
+          (quotation) => quotation.price != 0
+        );
+        break;
+      case 'Pending':
+        this.filteredQuotations = this.quotations.filter(
+          (quotation) => quotation.price == 0
+        );
+        break;
+      default:
+        this.filteredQuotations = this.quotations;
+        break;
     }
-    this.filteredQuotations = this.quotations.filter(
-      (quotation) => quotation.status === this.status
-    );
   }
 
   filterPriceQuotations() {
@@ -80,7 +100,40 @@ export class BoRequestComponent implements OnDestroy {
   }
 
   deleteQuotation(request: requests) {
-    this.getRequestQuoteService.deleteRequestQuote(request.id.toString());
+    try {
+      this.getRequestQuoteService.deleteRequestQuote(request.id.toString());
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Delete success',
+      });
+    } catch (error) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Delete failed',
+      });
+    }
+  }
+
+  confirm(event: Event, request: requests) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Please confirm to proceed moving forward.',
+      rejectButtonStyleClass: 'p-button-danger p-button-sm',
+      acceptButtonStyleClass: 'p-button-outlined p-button-sm',
+      accept: () => {
+        this.deleteQuotation(request);
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Rejected',
+          detail: 'You have rejected',
+          life: 3000,
+        });
+      },
+    });
   }
 
   getSeverity(status: string) {

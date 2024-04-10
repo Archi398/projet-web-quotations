@@ -7,9 +7,12 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { environment } from '../environments/environment';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    ConfirmationService,
+    MessageService,
     provideRouter(routes, withViewTransitions()),
     provideAnimations(),
     importProvidersFrom([
